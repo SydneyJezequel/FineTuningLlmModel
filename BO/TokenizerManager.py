@@ -5,8 +5,8 @@ from transformers import AutoTokenizer
 
 
 
-class Tokenizer:
-    """ Classe du Tokenizer """
+class TokenizerManager:
+    """ Classe du Gestionnaire de Tokenizer """
 
 
 

@@ -1,6 +1,6 @@
-from BO.Dataset import Dataset
+from BO.DatasetManager import DatasetManager
 from BO.Model import Model
-from BO.Tokenizer import Tokenizer
+from BO.TokenizerManager import TokenizerManager
 from transformers import TrainingArguments, Trainer
 from transformers import DefaultDataCollator
 import config
@@ -17,8 +17,8 @@ class FineTuningService:
 
     def __init__(self):
         """ Constructeur """
-        self.dataset = Dataset(config.DATASET_NAME, config.SUB_DATASET_NAME)
-        self.tokenizer = Tokenizer(config.MODEL_NAME)
+        self.datasetManager = DatasetManager(config.DATASET_NAME, config.SUB_DATASET_NAME)
+        self.tokenizerManager = TokenizerManager(config.MODEL_NAME)
         self.model = Model(config.MODEL_NAME)
         self.training_arguments = TrainingArguments(
             output_dir=config.MODEL_PATH,
@@ -35,21 +35,21 @@ class FineTuningService:
         """ Méthode en charge du Fine Tuning """
         # Chargement des dataset :
         print("début du Fine Tuning")
-        train_dataset = self.dataset.prepare_dataset(self.dataset.dataset, config.TRAIN_DATASET_SIZE, config.TRAIN_TYPE)
-        validation_dataset = self.dataset.prepare_dataset(self.dataset.dataset, config.VALIDATION_DATASET_SIZE,
+        train_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, config.TRAIN_DATASET_SIZE, config.TRAIN_TYPE)
+        validation_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, config.VALIDATION_DATASET_SIZE,
                                                           config.VALIDATION_TYPE)
         print("train dataset : ", train_dataset)
         print("validation dataset : ", validation_dataset)
         # Tokenization des datasets :
         tokenized_train_dataset = train_dataset.map(
-            lambda examples: self.dataset.preprocess_function(examples, self.tokenizer.tokenizer), batched=True)
+            lambda examples: self.datasetManager.preprocess_function(examples, self.tokenizerManager.tokenizer), batched=True)
         tokenized_validation_dataset = validation_dataset.map(
-            lambda examples: self.dataset.preprocess_function(examples, self.tokenizer.tokenizer), batched=True)
+            lambda examples: self.datasetManager.preprocess_function(examples, self.tokenizerManager.tokenizer), batched=True)
         # Création du batch :
         data_collator = DefaultDataCollator()
         # Exécution du Fine Tuning :
         self.fine_tuning_execution(self.model, self.training_arguments, tokenized_train_dataset,
-                                   tokenized_validation_dataset, self.tokenizer, data_collator)
+                                   tokenized_validation_dataset, self.tokenizerManager, data_collator)
 
 
 

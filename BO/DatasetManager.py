@@ -6,8 +6,8 @@ import config
 
 
 
-class Dataset:
-    """ Classe du Dataset """
+class DatasetManager:
+    """ Classe du Gestionnaire de Dataset """
 
 
 
