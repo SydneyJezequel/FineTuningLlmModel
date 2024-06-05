@@ -14,4 +14,3 @@ class Model:
         """ Constructeur """
         self.model = AutoModelForQuestionAnswering.from_pretrained(model_name, use_auth_token=True)
 
-

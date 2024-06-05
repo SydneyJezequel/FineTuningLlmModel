@@ -86,4 +86,3 @@ class DatasetManager:
         inputs["end_positions"] = end_positions
         return inputs
 
-

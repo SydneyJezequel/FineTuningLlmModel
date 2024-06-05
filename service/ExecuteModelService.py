@@ -24,4 +24,3 @@ class ExecuteModelService:
         print("answer : ", answer)
         return answer
 
-

@@ -86,4 +86,3 @@ class TokenizerManager:
         inputs["end_positions"] = end_positions
         return inputs
 
-

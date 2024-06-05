@@ -68,4 +68,3 @@ class FineTuningService:
         # Exécution de l'entrainement :
         trainer.train()
 
-

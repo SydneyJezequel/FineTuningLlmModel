@@ -13,4 +13,3 @@ class ExecuteModelParameters(BaseModel):
     question: str
     context: str
 
-
