@@ -49,8 +49,7 @@ class FineTuningService:
             num_train_epochs=num_epochs,
             weight_decay=config.WEIGHT_DECAY)
         # Exécution du Fine Tuning :
-        self.fine_tuning_execution(self.model, self.training_arguments, tokenized_train_dataset,
-                                   tokenized_validation_dataset, self.tokenizerManager, data_collator)
+        self.fine_tuning_execution(self.model, self.training_arguments, tokenized_train_dataset, tokenized_validation_dataset, self.tokenizerManager, data_collator)
 
 
 
