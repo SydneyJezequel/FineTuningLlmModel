@@ -20,24 +20,16 @@ class FineTuningService:
         self.datasetManager = DatasetManager(config.DATASET_NAME, config.SUB_DATASET_NAME)
         self.tokenizerManager = TokenizerManager(config.MODEL_NAME)
         self.model = Model(config.MODEL_NAME)
-        self.training_arguments = TrainingArguments(
-            output_dir=config.MODEL_PATH,
-            evaluation_strategy=config.EVALUATION_STRATEGY,
-            learning_rate=config.LEARNING_RATE,
-            per_device_train_batch_size=config.PER_DEVICE_TRAIN_BATCH_SIZE,
-            per_device_eval_batch_size=config.PER_DEVICE_EVAL_BATCH_SIZE,
-            num_train_epochs=config.NUM_EPOCH,
-            weight_decay=config.WEIGHT_DECAY)
 
 
 
-    def fine_tune_model(self):
+    def fine_tune_model(self, num_epochs=config.NUM_EPOCH, train_dataset_size=config.TRAIN_DATASET_SIZE, validation_dataset_size=config.VALIDATION_DATASET_SIZE,
+                        train_batch_size=config.PER_DEVICE_TRAIN_BATCH_SIZE, eval_batch_size=config.PER_DEVICE_EVAL_BATCH_SIZE):
         """ Méthode en charge du Fine Tuning """
         # Chargement des dataset :
         print("début du Fine Tuning")
-        train_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, config.TRAIN_DATASET_SIZE, config.TRAIN_TYPE)
-        validation_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, config.VALIDATION_DATASET_SIZE,
-                                                          config.VALIDATION_TYPE)
+        train_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, train_dataset_size, config.TRAIN_TYPE)
+        validation_dataset = self.datasetManager.prepare_dataset(self.datasetManager.dataset, validation_dataset_size, config.VALIDATION_TYPE)
         print("train dataset : ", train_dataset)
         print("validation dataset : ", validation_dataset)
         # Tokenization des datasets :
@@ -47,6 +39,15 @@ class FineTuningService:
             lambda examples: self.datasetManager.preprocess_function(examples, self.tokenizerManager.tokenizer), batched=True)
         # Création du batch :
         data_collator = DefaultDataCollator()
+        # Définition des Hyperparamètres :
+        self.training_arguments = TrainingArguments(
+            output_dir=config.MODEL_PATH,
+            evaluation_strategy=config.EVALUATION_STRATEGY,
+            learning_rate=config.LEARNING_RATE,
+            per_device_train_batch_size=train_batch_size,
+            per_device_eval_batch_size=eval_batch_size,
+            num_train_epochs=num_epochs,
+            weight_decay=config.WEIGHT_DECAY)
         # Exécution du Fine Tuning :
         self.fine_tuning_execution(self.model, self.training_arguments, tokenized_train_dataset,
                                    tokenized_validation_dataset, self.tokenizerManager, data_collator)
